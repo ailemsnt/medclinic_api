@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtPayload, sign, verify } from 'jsonwebtoken';
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
+import { AuthUserDto } from '../@common/dto/auth-user.dto';
 
 @Injectable()
 export class JwtService {
@@ -31,13 +32,13 @@ export class JwtService {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: '8h',
+        expiresIn: (process.env.JWT_EXPIRES_IN || '1h') as any,
         issuer: 'sctec',
       },
     );
   }
 
-  verify(jwt: string): object {
+  verify(jwt: string): AuthUserDto {
     if (!process.env.JWT_SECRET || !process.env.JWT_CIPHER_KEY) {
       throw new Error('JWT_SECRET not set');
     }
@@ -59,6 +60,11 @@ export class JwtService {
       cipher.final(),
     ]);
 
-    return JSON.parse(decipheredPayload.toString('utf-8')) as object;
+    return {
+      ...payload,
+      data: JSON.parse(
+        decipheredPayload.toString('utf-8'),
+      ) as AuthUserDto['data'],
+    };
   }
 }
