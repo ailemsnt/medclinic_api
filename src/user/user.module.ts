@@ -6,10 +6,11 @@ import { UserRepository } from "./user.repository";
 import { TYPEORM_USER_REPOSITORY, UserTypeOrmRepository } from "./user-typeorm.repository";
 import { AppDataSource } from "../@common/database/typeorm/typeorm";
 import { User } from "../@common/entities/user.entity";
+import { AuthController } from "../auth/auth.controller";
 
 @Module({
   imports: [JwtModule],
-  controllers: [UserController],
+  controllers: [UserController, AuthController],
   providers: [
     UserService,
     {

@@ -2,6 +2,7 @@ import { Inject, Injectable } from "@nestjs/common";
 import { Repository } from "typeorm";
 import { User } from "../@common/entities/user.entity";
 import { CreateUserDto } from "./dto/create-user.dto";
+import { Roles } from "../@common/entities/enums/roles.enum";
 
 export const TYPEORM_USER_REPOSITORY =
   'TYPEORM_USER_REPOSITORY' as const;
@@ -34,11 +35,10 @@ export class UserTypeOrmRepository {
     return this.repository.findOneBy({ id });
   }
 
-  async create(user: CreateUserDto): Promise<User> {
-    const userEntity = await this.repository.create(user);
+  async create(user: CreateUserDto): Promise<{name: string; role: Roles}> {
+    const userEntity = await this.repository.create({ name: user.name, email: user.email, passwordHash: user.password, role: user.role});
     const savedUser = await this.repository.save(userEntity);
 
-    savedUser.passwordHash = '';
-    return savedUser;
+    return {name: savedUser.name, role: savedUser.role};
   }  
 }
