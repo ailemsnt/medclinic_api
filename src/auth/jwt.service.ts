@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { JwtPayload, sign, verify } from 'jsonwebtoken';
+import { JwtPayload, sign, verify, SignOptions } from 'jsonwebtoken';
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
+import { AuthUserDto } from '../@common/dto/auth-user.dto';
 
+const expiresIn: SignOptions['expiresIn'] = (process.env.JWT_EXPIRES_IN ||
+  '1h') as SignOptions['expiresIn'];
 @Injectable()
 export class JwtService {
   sign(payload: object) {
@@ -31,13 +34,13 @@ export class JwtService {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: '8h',
+        expiresIn: expiresIn,
         issuer: 'sctec',
       },
     );
   }
 
-  verify(jwt: string): object {
+  verify(jwt: string): AuthUserDto {
     if (!process.env.JWT_SECRET || !process.env.JWT_CIPHER_KEY) {
       throw new Error('JWT_SECRET not set');
     }
@@ -59,6 +62,11 @@ export class JwtService {
       cipher.final(),
     ]);
 
-    return JSON.parse(decipheredPayload.toString('utf-8')) as object;
+    return {
+      ...payload,
+      data: JSON.parse(
+        decipheredPayload.toString('utf-8'),
+      ) as AuthUserDto['data'],
+    };
   }
 }

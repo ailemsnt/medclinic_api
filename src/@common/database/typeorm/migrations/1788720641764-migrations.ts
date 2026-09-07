@@ -8,7 +8,7 @@ export class Migrations1788720641764 implements MigrationInterface {
       `CREATE TYPE "public"."user_role_enum" AS ENUM('ADMIN', 'ATTENDANT', 'USER')`,
     );
     await queryRunner.query(
-      `CREATE TABLE "user" ("id" integer GENERATED ALWAYS AS IDENTITY NOT NULL, "name" character varying(255) NOT NULL, "email" character varying(255) NOT NULL, "password_hash" character varying(255) NOT NULL, "role" "public"."user_role_enum" NOT NULL DEFAULT 'USER', "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, CONSTRAINT "pk_user" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "user" ("id" integer GENERATED ALWAYS AS IDENTITY NOT NULL, "name" character varying(255) NOT NULL, "email" character varying(255) NOT NULL, "password_hash" character varying(255) NOT NULL, "role" "public"."user_role_enum" NOT NULL DEFAULT 'ATTENDANT', "created_at" TIMESTAMP NOT NULL DEFAULT now(), "updated_at" TIMESTAMP NOT NULL DEFAULT now(), "deleted_at" TIMESTAMP, CONSTRAINT "pk_user" PRIMARY KEY ("id"))`,
     );
   }
 
