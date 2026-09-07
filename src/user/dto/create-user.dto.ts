@@ -1,28 +1,35 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, MaxLength, MinLength } from "class-validator";
-import { Roles } from "../../@common/entities/enums/roles.enum";
-import { Transform } from "class-transformer";
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  Length,
+  Matches,
+} from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateUserDto {
   @IsString()
-  @Transform(({value}) => typeof value === "string" ? value?.trim() : value)
-  @IsNotEmpty({message: "Nome não informado."})
-  @MinLength(6, {message: "Tamanho mínimo inválido para o nome."})
-  @MaxLength(100, {message: "O nome pode ter no máximo 100 caracteres."})
+  @IsNotEmpty({ message: 'Nome não informado.' })
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim() : value,
+  )
+  @Length(6, 100, { message: 'Tamanho mínimo inválido para o nome.' })
   name!: string;
 
-  @Transform(({ value}) => value?.trim().toLowerCase())
-  @IsNotEmpty({message: "E-mail não informado."})
-  @IsEmail({}, {message: "E-mail inválido."})
+  @IsNotEmpty({ message: 'E-mail não informado.' })
+  @IsEmail({}, { message: 'E-mail inválido.' })
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? value.trim().toLocaleLowerCase() : value,
+  )
+  @Length(1, 150, { message: 'Tamanho inválido para o e-mail.' })
   email!: string;
 
-  @IsString() 
-  @Transform(({value}) => typeof value === "string" ? value?.trim() : value)
-  @IsNotEmpty({message: "Senha não informada."})
-  @MinLength(6, {message: "Tamanho mínimo inválido para a senha."})
-  @MaxLength(50, {message: "Tamanho máximo inválido para a senha."})
+  @IsString({ message: 'Formato do senha informado inválido' })
+  @IsNotEmpty({ message: 'Senha não informada.' })
+  @Length(8, 75, { message: 'Tamanho mínimo ou máximo inválido para a senha.' })
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[A-Za-z\d\W_]{8,75}$/, {
+    message:
+      'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial.',
+  })
   password!: string;
-
-  @IsOptional()
-  @IsEnum(Roles, {message: "Perfil incorreto."})
-  role?: Roles;
 }

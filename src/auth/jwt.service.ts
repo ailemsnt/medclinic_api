@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { JwtPayload, sign, verify } from 'jsonwebtoken';
+import { JwtPayload, sign, verify, SignOptions } from 'jsonwebtoken';
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 import { AuthUserDto } from '../@common/dto/auth-user.dto';
 
+const expiresIn: SignOptions['expiresIn'] = (process.env.JWT_EXPIRES_IN ||
+  '1h') as SignOptions['expiresIn'];
 @Injectable()
 export class JwtService {
   sign(payload: object) {
@@ -32,7 +34,7 @@ export class JwtService {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: (process.env.JWT_EXPIRES_IN || '1h') as any,
+        expiresIn: expiresIn,
         issuer: 'sctec',
       },
     );

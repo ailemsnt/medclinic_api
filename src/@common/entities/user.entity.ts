@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   UpdateDateColumn,
-  Index,
 } from 'typeorm';
 import { Roles } from './enums/roles.enum';
 
@@ -23,7 +22,7 @@ export class User {
   @Column('varchar', { length: 255 })
   passwordHash!: string;
 
-  @Column('enum', { enum: Roles, default: Roles.USER })
+  @Column('enum', { enum: Roles, default: Roles.ATTENDANT })
   role!: Roles;
 
   @CreateDateColumn()

@@ -1,9 +1,14 @@
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
-import { JwtService } from "../auth/jwt.service";
-import { CreateUserDto } from "./dto/create-user.dto";
-import { compare, genSalt, hash } from "bcrypt";
-import { LoginDto } from "./dto/login.dto";
-import { UserRepository } from "./user.repository";
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { JwtService } from '../auth/jwt.service';
+import { CreateUserDto } from './dto/create-user.dto';
+import { compare, genSalt, hash } from 'bcrypt';
+import { LoginDto } from './dto/login.dto';
+import { UserRepository } from './user.repository';
 
 @Injectable()
 export class UserService {
@@ -15,7 +20,7 @@ export class UserService {
   async create(user: CreateUserDto) {
     const existsUser = await this.userRepository.getUserByEmail(user.email);
     if (existsUser) {
-      throw new ConflictException("Usuário já cadastrado");
+      throw new ConflictException('Usuário já cadastrado');
     }
 
     const salt = await genSalt(10);
@@ -27,15 +32,13 @@ export class UserService {
   }
 
   async login(loginDto: LoginDto) {
-    const user = await this.userRepository.getUserByEmail(
-      loginDto.email,
-    );
+    const user = await this.userRepository.getUserByEmail(loginDto.email);
 
     if (!user) {
       throw new UnauthorizedException();
     }
 
-    if (!(await compare(loginDto.password, user.password))) {
+    if (!(await compare(loginDto.password, user.passwordHash))) {
       throw new UnauthorizedException();
     }
 

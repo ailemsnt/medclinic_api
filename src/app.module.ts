@@ -16,6 +16,6 @@ import { BadRequestExceptionFilter } from './@common/filters/bad-request-excepti
       provide: APP_FILTER,
       useClass: BadRequestExceptionFilter,
     },
-  ]
+  ],
 })
 export class AppModule {}

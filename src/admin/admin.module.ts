@@ -1,7 +1,7 @@
-import { Module } from "@nestjs/common";
-import { AdminController } from "./admin.controller";
-import { UserModule } from "../user/user.module";
-import { JwtModule } from "../auth/jwt.module";
+import { Module } from '@nestjs/common';
+import { AdminController } from './admin.controller';
+import { UserModule } from '../user/user.module';
+import { JwtModule } from '../auth/jwt.module';
 
 @Module({
   imports: [JwtModule, UserModule],

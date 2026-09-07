@@ -16,14 +16,16 @@ export class JwtGuard implements CanActivate {
   private extractToken(context: ExecutionContext) {
     const expressReq = context.switchToHttp().getRequest<Request>();
 
-    if (!expressReq.headers.authorization) {
-      throw new UnauthorizedException('No token provided');
+    const authHeader = expressReq.headers.authorization;
+
+    if (!authHeader) {
+      throw new UnauthorizedException('Token não informado');
     }
 
-    const [bearerString, token] = expressReq.headers.authorization.split(' ');
+    const [bearerString, token] = authHeader.split(' ');
 
-    if (bearerString !== 'Bearer') {
-      throw new UnauthorizedException('Invalid token provided');
+    if (!token || bearerString !== 'Bearer') {
+      throw new UnauthorizedException('Token inválido');
     }
 
     return token;
@@ -36,7 +38,10 @@ export class JwtGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
-    const payload = this.jwtService.verify(this.extractToken(context));    
+    const payload = this.jwtService.verify(this.extractToken(context));
+    if (payload.iss !== 'sctec') {
+      throw new UnauthorizedException('Invalid token provided');
+    }
     this.setPayload(context, payload);
     return true;
   }

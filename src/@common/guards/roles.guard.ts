@@ -1,28 +1,33 @@
-import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@nestjs/common";
-import { Reflector } from "@nestjs/core";
-import { Roles } from "../entities/enums/roles.enum";
-import { Request } from "express";
-import { Observable } from "rxjs";
-import { ROLES_KEY } from "../decorators/roles.decorator";
-import { getUserJwt } from "../decorators/get-user-jwt.decorator";
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { Roles } from '../entities/enums/roles.enum';
+import { Request } from 'express';
+import { Observable } from 'rxjs';
+import { ROLES_KEY } from '../decorators/roles.decorator';
+import { getUserJwt } from '../decorators/get-user-jwt.decorator';
 
 @Injectable()
-export class RolesGuard implements CanActivate{
-  constructor(
-    private readonly reflector: Reflector,
-  ) {}
+export class RolesGuard implements CanActivate {
+  constructor(private readonly reflector: Reflector) {}
 
-  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
     const roles = this.reflector.get<Roles[]>(ROLES_KEY, context.getHandler());
     if (!roles) {
-      throw new Error(
-        'Do not Use RoleGuard without Roles, use @Roles(). Adding the guard without the metadata is confusing and do not have an explicit behavior',
+      throw new ForbiddenException(
+        'Acesso negado. Você não tem permissão para acessar este recurso.',
       );
     }
 
-    const userJwt = getUserJwt(context);  
+    const userJwt = getUserJwt(context);
 
-    if (!roles.includes(userJwt.role)) {
+    if (!roles.includes(userJwt.data.role)) {
       throw new ForbiddenException('Acesso negado.');
     }
 
