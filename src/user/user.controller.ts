@@ -13,13 +13,14 @@ export class UserController {
   @Get('me')
   async getMe(
     @GetUserJwt() user: AuthUserDto,) {
-    //const user  = await this.userService.get(req.user!.id);
-    return this.userService.get(user.data.id)
-      // name: user.name,
-      // email: user.email,
-      // role: user.role,
-      // id: user.id,
-      // createdAt: user.createdAt,
+    const userMe  = await this.userService.get(user.data.id);
+    return {
+      name: userMe.name,
+      email: userMe.email,
+      role: userMe.role,
+      id: userMe.id,
+      createdAt: userMe.createdAt,
+    }
     ;
   }
 }

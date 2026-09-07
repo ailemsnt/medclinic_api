@@ -14,7 +14,7 @@ export class UserTypeOrmRepository {
     private readonly repository: Repository<User>,
   ) {}
 
-  getUserByEmail(
+  async getUserByEmail(
     email: string,
   ): Promise<(User & { passwordHash: string }) | null> {
     return this.repository.findOne({
@@ -36,9 +36,18 @@ export class UserTypeOrmRepository {
   }
 
   async create(user: CreateUserDto): Promise<{name: string; role: Roles}> {
-    const userEntity = await this.repository.create({ name: user.name, email: user.email, passwordHash: user.password, role: user.role});
+    const userEntity = await this.repository.create({ 
+      name: user.name, 
+      email: user.email, 
+      passwordHash: 
+      user.password, 
+      role: user.role
+    });
     const savedUser = await this.repository.save(userEntity);
 
-    return {name: savedUser.name, role: savedUser.role};
+    return {
+      name: savedUser.name, 
+      role: savedUser.role
+    };
   }  
 }
