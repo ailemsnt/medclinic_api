@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { JwtService } from '../../auth/jwt.service';
+import { JwtService } from '../../auth/jwt/jwt.service';
 import { Request } from 'express';
 import { AuthUserDto } from '../dto/auth-user.dto';
 

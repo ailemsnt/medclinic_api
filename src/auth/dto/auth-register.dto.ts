@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 
-export class CreateUserDto {
+export class AuthRegisterDto {
   @IsString()
   @IsNotEmpty({ message: 'Nome não informado.' })
   @Transform(({ value }: { value: unknown }) =>
@@ -17,7 +17,7 @@ export class CreateUserDto {
   name!: string;
 
   @IsNotEmpty({ message: 'E-mail não informado.' })
-  @IsEmail({}, { message: 'E-mail inválido.' })
+  @IsEmail({}, { message: 'Formato de e-mail inválido.' })
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toLocaleLowerCase() : value,
   )

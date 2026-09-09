@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '../auth/jwt/jwt.module';
-import { UserController } from './user.controller';
-import { UserService } from './user.service';
-import { UserRepository } from './user.repository';
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
+import { UserRepository } from '../user/user.repository';
 import {
   TYPEORM_USER_REPOSITORY,
   UserTypeOrmRepository,
-} from './user-typeorm.repository';
+} from '../user/user-typeorm.repository';
+import { JwtModule } from './jwt/jwt.module';
 import { AppDataSource } from '../@common/database/typeorm/typeorm';
 import { User } from '../@common/entities/user.entity';
 
 @Module({
   imports: [JwtModule],
-  controllers: [UserController],
+  controllers: [AuthController],
   providers: [
-    UserService,
+    AuthService,
     {
       provide: UserRepository, // Quando pedir a porta
       useClass: UserTypeOrmRepository, // Usar a implementação
@@ -27,4 +27,4 @@ import { User } from '../@common/entities/user.entity';
     },
   ],
 })
-export class UserModule {}
+export class AuthModule {}
