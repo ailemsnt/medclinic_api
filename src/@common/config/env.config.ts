@@ -8,25 +8,32 @@ const envSchema = z.object({
   PORT: z.coerce.number().default(3000),
 
   //Banco de dados
-  DB_HOST: z.string().min(1, 'DB_HOST é obrigatório'),
-  DB_PORT: z.coerce.number(),
-  DB_NAME: z.string().min(1, 'DB_NAME é obrigatório'),
-  DB_USER: z.string().min(1, 'DB_USER é obrigatório'),
-  DB_PASSWORD: z.string().default('DB_PASSWORD é obrigatório'),
-  DB_SYNCRONIZE: z.preprocess((val) => val === 'true', z.boolean().default(false)),
+  DB_HOST: z.string().default('').refine((val) => val.length > 0, 'DB_HOST é obrigatório'),
+  DB_PORT: z.coerce.number().or(z.nan()).refine((val) => typeof val === 'number' && !isNaN(val), 'DB_PORT é obrigatório e deve ser um número'),
+  DB_NAME: z.string().default('').refine((val) => val.length > 0, 'DB_NAME é obrigatório'),
+  DB_USER: z.string().default('').refine((val) => val.length > 0, 'DB_USER é obrigatório'),
+  DB_PASSWORD: z.string().default('').refine((val) => val.length > 0, 'DB_PASSWORD é obrigatório'),
+  
+  DB_SYNCHRONIZE: z.preprocess((val) => {
+    if (typeof val === "string") {
+      return val.toLowerCase() === "true";
+    }
+    if (typeof val === "boolean") {
+      return val;
+    }
+    return false; 
+  },z.boolean().default(false)),
   DB_LOG_LEVEL: z.enum(['query', 'error', 'info', 'warn']).default('error'),
 
   //Autenticação
-  JWT_SECRET: z.string().min(1, 'JWT_SECRET é obrigatório'),
-  JWT_CIPHER_KEY: z.string().min(1, 'JWT_CIPHER_KEY é obrigatório'),
+  JWT_SECRET: z.string().default('').refine((val) => val.length > 0, 'JWT_SECRET é obrigatório'),
+  JWT_CIPHER_KEY: z.string().default('').refine((val) => val.length > 0, 'JWT_CIPHER_KEY é obrigatório'),
   JWT_EXPIRES_IN: z.string().default('1h'),
 });
 
-// Valida os dados imediatamente ao importar o arquivo
 const _env = envSchema.safeParse(process.env);
-
 if (_env.success === false) {
-  console.error('❌ Erro crítico: Variáveis de ambiente inválidas:');
+  console.error('Não será possível inicializar a API - Variáveis de ambiente inválidas:');
   const errors = _env.error.flatten().fieldErrors;
   Object.entries(errors).forEach(([field, messages]) => {
     console.error(`  - [${field}]: ${messages?.join(', ')}`);
