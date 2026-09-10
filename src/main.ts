@@ -1,3 +1,4 @@
+import { env } from './@common/config/env.config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { initDatabase } from './@common/database/typeorm/typeorm';
@@ -14,6 +15,6 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(env.PORT ?? 3000);
 }
 bootstrap().catch(console.error);
