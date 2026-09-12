@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 
-export class CreateUserDto {
+export class UserCreateDto {
   @IsString()
   @IsNotEmpty({ message: 'Nome não informado.' })
   @Transform(({ value }: { value: unknown }) =>
@@ -17,7 +17,7 @@ export class CreateUserDto {
   name!: string;
 
   @IsNotEmpty({ message: 'E-mail não informado.' })
-  @IsEmail({}, { message: 'E-mail inválido.' })
+  @IsEmail({}, { message: 'Formato de e-mail inválido.' })
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toLocaleLowerCase() : value,
   )
@@ -31,5 +31,5 @@ export class CreateUserDto {
     message:
       'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial.',
   })
-  password!: string;
+  passwordHash!: string;
 }

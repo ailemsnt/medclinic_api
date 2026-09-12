@@ -1,9 +1,9 @@
 import { Transform } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
 
-export class LoginDto {
+export class AuthLoginDto {
   @IsNotEmpty({ message: 'E-mail não informado.' })
-  @IsEmail({}, { message: 'E-mail inválido.' })
+  @IsEmail({}, { message: 'Formato de e-mail inválido.' })
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toLocaleLowerCase() : value,
   )

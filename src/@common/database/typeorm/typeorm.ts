@@ -1,4 +1,4 @@
-import 'dotenv/config';
+import { env } from '../../config/env.config';
 import { DataSource, LoggerOptions } from 'typeorm';
 
 import { SnakeCaseNamingStrategy } from './snake-case-naming-pattern';
@@ -6,20 +6,20 @@ import { User } from '../../entities/user.entity';
 
 export const AppDataSource = new DataSource({
   type: 'postgres',
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT ?? 5432),
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: env.DB_HOST,
+  port: Number(env.DB_PORT ?? 5432),
+  username: env.DB_USER,
+  password: env.DB_PASSWORD,
+  database: env.DB_NAME,
   poolSize: 10,
   /**
    * Só da pra utilizar em ambiente de desenvolvimento
    */
-  synchronize: process.env.DB_SYNCHRONIZE?.toLowerCase() === 'true',
+  synchronize: env.DB_SYNCHRONIZE,
   /**
    * export type LogLevel = "query" | "schema" | "error" | "warn" | "info" | "log" | "migration";
    */
-  logging: (process.env.DB_LOG_LEVEL ?? 'error') as LoggerOptions,
+  logging: (env.DB_LOG_LEVEL ?? 'error') as LoggerOptions,
   entities: [User],
   namingStrategy: new SnakeCaseNamingStrategy(),
   migrations: [__dirname + '/migrations/**/*{.js,.ts}'],

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { JwtModule } from '../auth/jwt.module';
+import { JwtModule } from '../auth/jwt/jwt.module';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
@@ -9,11 +9,10 @@ import {
 } from './user-typeorm.repository';
 import { AppDataSource } from '../@common/database/typeorm/typeorm';
 import { User } from '../@common/entities/user.entity';
-import { AuthController } from '../auth/auth.controller';
 
 @Module({
   imports: [JwtModule],
-  controllers: [UserController, AuthController],
+  controllers: [UserController],
   providers: [
     UserService,
     {
@@ -27,5 +26,6 @@ import { AuthController } from '../auth/auth.controller';
       },
     },
   ],
+  exports: [UserService],
 })
 export class UserModule {}
