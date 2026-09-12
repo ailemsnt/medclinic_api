@@ -3,10 +3,11 @@ import { JwtPayload, sign, verify, TokenExpiredError } from 'jsonwebtoken';
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 import { JWT_EXPIRES_IN } from '../../@common/config/jwt.config';
 import { AuthUserDto } from '../../@common/dto/auth-user.dto';
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class JwtService {
-  sign(payload: object) {
+  sign(payload: object, userId: number) {
     if (!process.env.JWT_SECRET || !process.env.JWT_CIPHER_KEY) {
       throw new Error('JWT_SECRET not set');
     }
@@ -33,6 +34,7 @@ export class JwtService {
       },
       process.env.JWT_SECRET,
       {
+        subject: String(userId),
         expiresIn: JWT_EXPIRES_IN,
         issuer: 'sctec',
       },
@@ -46,6 +48,12 @@ export class JwtService {
 
     try {
       const payload = verify(jwt, process.env.JWT_SECRET) as JwtPayload;
+
+      console.log(payload.sub);
+      
+      if (!payload.sub) {
+        throw new Error('Token sem identificação do usuário.');
+      }
 
       const cipher = createDecipheriv(
         'aes-256-gcm',

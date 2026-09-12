@@ -3,36 +3,38 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { AuthRegisterDto } from './dto/auth-register.dto';
 import { JwtService } from './jwt/jwt.service';
 import { compare, genSalt, hash } from 'bcrypt';
-import { UserRepository } from '../user/user.repository';
 import { AuthLoginDto } from './dto/auth-login.dto';
 import { JWT_EXPIRES_IN } from '../@common/config/jwt.config';
+import { UserService } from '../user/user.service';
+import { AuthRegisterDto } from './dto/auth-register.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly userRepository: UserRepository,
+    private readonly userService: UserService,
   ) {}
 
   async register(user: AuthRegisterDto) {
-    const existsUser = await this.userRepository.getUserByEmail(user.email);
+    const existsUser = await this.userService.getUserByEmail(user.email);
+
     if (existsUser) {
       throw new ConflictException('Usuário já cadastrado');
     }
 
     const salt = await genSalt(10);
     const hashPassword = await hash(user.password, salt);
-    return this.userRepository.register({
+
+    return this.userService.register({
       ...user,
-      password: hashPassword,
+      passwordHash: hashPassword,
     });
   }
 
   async login(loginDto: AuthLoginDto) {
-    const user = await this.userRepository.getUserByEmail(loginDto.email);
+    const user = await this.userService.getUserByEmail(loginDto.email);
 
     if (!user) {
       throw new UnauthorizedException();
@@ -42,10 +44,11 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const token = this.jwtService.sign({
-      id: user.id,
+    const token = this.jwtService.sign({      
       role: user.role,
-    });
+    },
+    user.id,
+  );
 
     return { 
       token,

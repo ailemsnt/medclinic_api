@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { Transform } from 'class-transformer';
 
-export class AuthRegisterDto {
+export class UserCreateDto {
   @IsString()
   @IsNotEmpty({ message: 'Nome não informado.' })
   @Transform(({ value }: { value: unknown }) =>
@@ -31,5 +31,5 @@ export class AuthRegisterDto {
     message:
       'A senha deve conter pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial.',
   })
-  password!: string;
+  passwordHash!: string;
 }

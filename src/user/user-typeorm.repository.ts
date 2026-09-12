@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { User } from '../@common/entities/user.entity';
 import { Roles } from '../@common/entities/enums/roles.enum';
-import { AuthRegisterDto } from '../auth/dto/auth-register.dto';
+import { UserCreateDto } from './dto/user-create.dto';
 
 export const TYPEORM_USER_REPOSITORY = 'TYPEORM_USER_REPOSITORY' as const;
 
@@ -35,12 +35,12 @@ export class UserTypeOrmRepository {
   }
 
   async register(
-    user: AuthRegisterDto,
+    user: UserCreateDto,
   ): Promise<{ name: string; role: Roles }> {
     const userEntity = this.repository.create({
       name: user.name,
       email: user.email,
-      passwordHash: user.password,
+      passwordHash: user.passwordHash,
     });
     const savedUser = await this.repository.save(userEntity);
 

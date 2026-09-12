@@ -26,5 +26,6 @@ import { User } from '../@common/entities/user.entity';
       },
     },
   ],
+  exports: [UserService],
 })
 export class UserModule {}
