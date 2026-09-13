@@ -2,6 +2,7 @@ import {
   ClassSerializerInterceptor,
   Controller,
   Get,
+  UnauthorizedException,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -19,7 +20,7 @@ export class UserController {
   @Get('me')
   @UseInterceptors(ClassSerializerInterceptor)
   async getMe(@GetUserJwt() user: AuthUserDto): Promise<UserResponseDto> {
-    const userMe = await this.userService.get(user.data.id);
+    const userMe = await this.userService.get(Number(user.sub));
     return new UserResponseDto(userMe);
   }
 }

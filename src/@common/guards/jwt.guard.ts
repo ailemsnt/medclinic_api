@@ -40,7 +40,7 @@ export class JwtGuard implements CanActivate {
   ): boolean | Promise<boolean> | Observable<boolean> {
     const payload = this.jwtService.verify(this.extractToken(context));
     if (payload.iss !== 'sctec') {
-      throw new UnauthorizedException('Invalid token provided');
+      throw new UnauthorizedException('Token inválido');
     }
     this.setPayload(context, payload);
     return true;

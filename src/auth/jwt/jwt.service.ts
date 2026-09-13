@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtPayload, sign, verify, TokenExpiredError } from 'jsonwebtoken';
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 import { JWT_EXPIRES_IN } from '../../@common/config/jwt.config';
@@ -9,7 +9,7 @@ import { Subject } from 'rxjs';
 export class JwtService {
   sign(payload: object, userId: number) {
     if (!process.env.JWT_SECRET || !process.env.JWT_CIPHER_KEY) {
-      throw new Error('JWT_SECRET not set');
+      throw new UnauthorizedException('JWT_SECRET not set');
     }
 
     const iv = randomBytes(12);
@@ -43,16 +43,14 @@ export class JwtService {
 
   verify(jwt: string): AuthUserDto {
     if (!process.env.JWT_SECRET || !process.env.JWT_CIPHER_KEY) {
-      throw new Error('JWT_SECRET not set');
+      throw new UnauthorizedException('JWT_SECRET not set');
     }
 
     try {
       const payload = verify(jwt, process.env.JWT_SECRET) as JwtPayload;
 
-      console.log(payload.sub);
-      
       if (!payload.sub) {
-        throw new Error('Token sem identificação do usuário.');
+        throw new UnauthorizedException('Token sem identificação do usuário.');
       }
 
       const cipher = createDecipheriv(
@@ -68,7 +66,7 @@ export class JwtService {
       const decipheredPayload = Buffer.concat([
         cipher.update(buffer),
         cipher.final(),
-      ]);
+      ]);     
 
       return {
         ...payload,
@@ -78,9 +76,9 @@ export class JwtService {
       };
     } catch (error) {
       if (error instanceof TokenExpiredError) {
-        throw new Error('Token expirado.');
+        throw new UnauthorizedException('Token expirado.');
       }
-      throw new Error('Token inválido.');
+      throw new UnauthorizedException('Token inválido.');
     }
   }
 }

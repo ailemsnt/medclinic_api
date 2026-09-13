@@ -6,7 +6,11 @@ import { UserCreateDto } from './dto/user-create.dto';
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async get(id: number) {
+  async get(id: number) {  
+    if (!id || isNaN(id)) {
+      throw new UnauthorizedException(`Credenciais inválidas.`);
+    }
+
     const user = await this.userRepository.get(id);
     if (!user) {
       throw new UnauthorizedException(`Credenciais inválidas.`);
