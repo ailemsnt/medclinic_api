@@ -13,7 +13,9 @@ export class AuthRegisterDto {
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim() : value,
   )
-  @Length(6, 100, { message: 'Tamanho mínimo inválido para o nome.' })
+  @Length(2, 100, { message: 'Tamanho inválido para o nome.' })
+  @Matches(/^[^\d\s\p{P}\p{S}'\-]+(?: [^\d\s\p{P}\p{S}'\-]+)*$/u, {
+  message: 'O nome contém caracteres inválidos.',})//essa regex permite nomes escritos em outros idiomas
   name!: string;
 
   @IsNotEmpty({ message: 'E-mail não informado.' })
@@ -21,7 +23,7 @@ export class AuthRegisterDto {
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toLocaleLowerCase() : value,
   )
-  @Length(1, 150, { message: 'Tamanho inválido para o e-mail.' })
+  @Length(7, 150, { message: 'Tamanho inválido para o e-mail.' })
   email!: string;
 
   @IsString({ message: 'Formato do senha informado inválido' })
