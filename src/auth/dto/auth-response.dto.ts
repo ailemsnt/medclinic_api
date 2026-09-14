@@ -2,7 +2,7 @@ import { Exclude, Expose } from 'class-transformer';
 import { Roles } from '../../@common/entities/enums/roles.enum';
 
 @Exclude()
-export class UserResponseDto {
+export class AuthResponseDto {
   @Expose()
   id!: number;
 
@@ -18,7 +18,7 @@ export class UserResponseDto {
   @Expose()
   createdAt!: Date;
 
-  constructor(partial: Partial<UserResponseDto>) {
+  constructor(partial: Partial<AuthResponseDto>) {
     Object.assign(this, partial);
   }
 }

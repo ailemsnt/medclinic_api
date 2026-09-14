@@ -14,8 +14,9 @@ export class AuthRegisterDto {
     typeof value === 'string' ? value.trim() : value,
   )
   @Length(2, 100, { message: 'Tamanho inválido para o nome.' })
-  @Matches(/^[^\d\s\p{P}\p{S}'\-]+(?: [^\d\s\p{P}\p{S}'\-]+)*$/u, {
-  message: 'O nome contém caracteres inválidos.',})//essa regex permite nomes escritos em outros idiomas
+  @Matches(/^[^\d\s\p{P}\p{S}'-]+(?: [^\d\s\p{P}\p{S}'-]+)*$/u, {
+    message: 'O nome contém caracteres inválidos.',
+  }) //essa regex permite nomes escritos em outros idiomas
   name!: string;
 
   @IsNotEmpty({ message: 'E-mail não informado.' })

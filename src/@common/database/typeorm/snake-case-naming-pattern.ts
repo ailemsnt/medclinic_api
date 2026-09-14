@@ -1,5 +1,4 @@
 import { createHash } from 'crypto';
-
 import { NamingStrategyInterface, Table, View } from 'typeorm';
 
 /** Postgres trunca identificadores em 63 bytes; acima disso o final é ignorado
@@ -83,7 +82,9 @@ export class SnakeCaseNamingStrategy implements NamingStrategyInterface {
     return toSnakeCase(propertyName);
   }
 
-  primaryKeyName(tableOrName: Table | string, _columnNames: string[]): string {
+  primaryKeyName(
+    tableOrName: Table /*| string, _columnNames: string[]*/,
+  ): string {
     const tableName = getTableName(tableOrName);
     return fitIdentifierLength(`pk_${tableName}`);
   }
@@ -119,8 +120,8 @@ export class SnakeCaseNamingStrategy implements NamingStrategyInterface {
   foreignKeyName(
     tableOrName: Table | string,
     columnNames: string[],
-    _referencedTablePath?: string,
-    _referencedColumnNames?: string[],
+    //_referencedTablePath?: string,
+    //_referencedColumnNames?: string[],
   ): string {
     const tableName = getTableName(tableOrName);
     const columns = sortedColumnNames(columnNames).join('_');
@@ -168,7 +169,7 @@ export class SnakeCaseNamingStrategy implements NamingStrategyInterface {
     firstTableName: string,
     secondTableName: string,
     firstPropertyName: string,
-    _secondPropertyName: string,
+    //_secondPropertyName: string,
   ): string {
     return toSnakeCase(
       `${firstTableName}_${firstPropertyName.replace(/\./g, '_')}_${secondTableName}`,

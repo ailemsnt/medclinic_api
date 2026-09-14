@@ -13,7 +13,7 @@ import { AuthUserDto } from '../dto/auth-user.dto';
 export class JwtGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
-  private extractToken(context: ExecutionContext) {
+  private extractToken(context: ExecutionContext): string {
     const expressReq = context.switchToHttp().getRequest<Request>();
 
     const authHeader = expressReq.headers.authorization;
@@ -32,7 +32,10 @@ export class JwtGuard implements CanActivate {
   }
 
   private setPayload(context: ExecutionContext, payload: AuthUserDto) {
-    context.switchToHttp().getRequest<Request>()['user'] = payload;
+    const request = context
+      .switchToHttp()
+      .getRequest<Request & { user?: AuthUserDto }>();
+    request.user = payload;
   }
 
   canActivate(
