@@ -1,6 +1,31 @@
 import 'dotenv/config';
 import { z } from 'zod';
 
+const validateJwtExpiration = (value: string): boolean => {
+  const match = value.match(/^(\d+)([mhd])$/);
+
+  if (!match) {
+    return false;
+  }
+
+  const amount = Number(match[1]);
+  const unit = match[2];
+
+  switch (unit) {
+    case 'm':
+      return amount <= 24 * 60;
+
+    case 'h':
+      return amount <= 24;
+
+    case 'd':
+      return amount <= 1;
+
+    default:
+      return false;
+  }
+};
+
 const envSchema = z.object({
   //Conf ambiente de desenvolvimento
   NODE_ENV: z
@@ -58,7 +83,9 @@ const envSchema = z.object({
       /^[0-9a-fA-F]+$/,
       'JWT_CIPHER_KEY deve ser uma string hexadecimal válida',
     ),
-  JWT_EXPIRES_IN: z.string().default('1h'),
+  JWT_EXPIRES_IN: z.string().default('1h').refine(validateJwtExpiration, {
+    message: 'JWT_EXPIRES_IN deve ser um período válido de no máximo 24 horas',
+  }),
 });
 
 const _env = envSchema.safeParse(process.env);
