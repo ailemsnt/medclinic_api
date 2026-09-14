@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Roles } from '../entities/enums/roles.enum';
-import { Request } from 'express';
 import { Observable } from 'rxjs';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 import { getUserJwt } from '../decorators/get-user-jwt.decorator';

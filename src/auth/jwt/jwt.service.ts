@@ -1,21 +1,21 @@
+import { env } from '../../@common/config/env.config';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtPayload, sign, verify, TokenExpiredError } from 'jsonwebtoken';
 import { createCipheriv, createDecipheriv, randomBytes } from 'node:crypto';
 import { JWT_EXPIRES_IN } from '../../@common/config/jwt.config';
 import { AuthUserDto } from '../../@common/dto/auth-user.dto';
-import { Subject } from 'rxjs';
 
 @Injectable()
 export class JwtService {
-  sign(payload: object, userId: number) {
-    if (!process.env.JWT_SECRET || !process.env.JWT_CIPHER_KEY) {
+  sign(payload: object, userId: number): string {
+    if (!env.JWT_SECRET || !env.JWT_CIPHER_KEY) {
       throw new UnauthorizedException('JWT_SECRET not set');
     }
 
     const iv = randomBytes(12);
     const cipher = createCipheriv(
       'aes-256-gcm',
-      Buffer.from(process.env.JWT_CIPHER_KEY, 'hex'),
+      Buffer.from(env.JWT_CIPHER_KEY, 'hex'),
       iv,
     );
 
@@ -32,7 +32,7 @@ export class JwtService {
         tag: tag.toString('base64url'),
         iv: iv.toString('base64url'),
       },
-      process.env.JWT_SECRET,
+      env.JWT_SECRET,
       {
         subject: String(userId),
         expiresIn: JWT_EXPIRES_IN,
@@ -42,12 +42,12 @@ export class JwtService {
   }
 
   verify(jwt: string): AuthUserDto {
-    if (!process.env.JWT_SECRET || !process.env.JWT_CIPHER_KEY) {
+    if (!env.JWT_SECRET || !env.JWT_CIPHER_KEY) {
       throw new UnauthorizedException('JWT_SECRET not set');
     }
 
     try {
-      const payload = verify(jwt, process.env.JWT_SECRET) as JwtPayload;
+      const payload = verify(jwt, env.JWT_SECRET) as JwtPayload;
 
       if (!payload.sub) {
         throw new UnauthorizedException('Token sem identificação do usuário.');
@@ -55,7 +55,7 @@ export class JwtService {
 
       const cipher = createDecipheriv(
         'aes-256-gcm',
-        Buffer.from(process.env.JWT_CIPHER_KEY, 'hex'),
+        Buffer.from(env.JWT_CIPHER_KEY, 'hex'),
         Buffer.from(payload.iv as string, 'base64url'),
       );
 
@@ -66,7 +66,7 @@ export class JwtService {
       const decipheredPayload = Buffer.concat([
         cipher.update(buffer),
         cipher.final(),
-      ]);     
+      ]);
 
       return {
         ...payload,

@@ -9,6 +9,7 @@ import { AuthLoginDto } from './dto/auth-login.dto';
 import { JWT_EXPIRES_IN } from '../@common/config/jwt.config';
 import { UserService } from '../user/user.service';
 import { AuthRegisterDto } from './dto/auth-register.dto';
+import { AuthResponseDto } from './dto/auth-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -17,7 +18,7 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async register(user: AuthRegisterDto) {
+  async register(user: AuthRegisterDto): Promise<AuthResponseDto> {
     const existsUser = await this.userService.getUserByEmail(user.email);
 
     if (existsUser) {
@@ -29,7 +30,7 @@ export class AuthService {
 
     return this.userService.register({
       ...user,
-      passwordHash: hashPassword,
+      password: hashPassword,
     });
   }
 
@@ -44,13 +45,14 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const token = this.jwtService.sign({      
-      role: user.role,
-    },
-    user.id,
-  );
+    const token = this.jwtService.sign(
+      {
+        role: user.role,
+      },
+      user.id,
+    );
 
-    return { 
+    return {
       token,
       user: user.id,
       role: user.role,
