@@ -17,10 +17,7 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
-      transform: true,
-      exceptionFactory: () => {
-        return new BadRequestException('Estrutura da requisição inválida.');
-      }
+      transform: true,      
     }),
   );
   await app.listen(env.PORT ?? 3000);
